@@ -1,14 +1,302 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caos Cósmico 🎮</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    background: linear-gradient(135deg, #090923, #32145c, #071d3e);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 750px;
+    background: #11142bea;
+    padding: 25px;
+    border: 2px solid #754cff;
+    border-radius: 22px;
+    box-shadow: 0 0 35px #754cff55;
+}
+
+h1 {
+    color: #72faff;
+    text-shadow: 0 0 15px #00eaff;
+    font-size: clamp(25px, 5vw, 40px);
+}
+
+p {
+    color: #d5d8ff;
+}
+
+.estadisticas {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.estadisticas div {
+    background: #252750;
+    padding: 12px;
+    border-radius: 12px;
+    flex: 1;
+}
+
+.numero {
+    display: block;
+    color: #72faff;
+    font-size: 25px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+button {
+    background: #72faff;
+    color: #10132d;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background: #ff73d2;
+    transform: scale(1.04);
+}
+
+#zonaJuego {
+    position: relative;
+    height: 350px;
+    overflow: hidden;
+    background: radial-gradient(circle, #24245c, #080b20);
+    border: 2px solid #484b91;
+    border-radius: 15px;
+}
+
+.objeto {
+    position: absolute;
+    border: none;
+    background: transparent;
+    font-size: 35px;
+    padding: 5px;
+    cursor: pointer;
+    animation: aparecer 0.2s ease-out;
+}
+
+@keyframes aparecer {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+#mensaje {
+    min-height: 25px;
+    color: #ff73d2;
+    font-weight: bold;
+}
+
+.instrucciones {
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>I.P.E.T. Nr 411</h1>
-    
+<div class="contenedor">
+
+    <h1>🚀 CAOS CÓSMICO</h1>
+
+    <p>¡Atrapa los objetos espaciales y consigue puntos!</p>
+
+    <div class="estadisticas">
+        <div>
+            PUNTOS
+            <span class="numero" id="puntos">0</span>
+        </div>
+
+        <div>
+            TIEMPO
+            <span class="numero" id="tiempo">30</span>
+        </div>
+
+        <div>
+            RÉCORD
+            <span class="numero" id="record">0</span>
+        </div>
+    </div>
+
+    <button id="iniciar">▶ Comenzar</button>
+    <button id="reiniciar">↻ Reiniciar</button>
+
+    <p id="mensaje">Presiona Comenzar para jugar.</p>
+
+    <div id="zonaJuego">
+        <p>🌌 ¡Prepárate para la aventura!</p>
+    </div>
+
+    <div class="instrucciones">
+        ⭐ Estrella: +1 punto<br>
+        💎 Cristal: +5 puntos<br>
+        ☄️ Cometa: −2 puntos<br>
+        ¡Tienes 30 segundos!
+    </div>
+
+</div>
+
+<script>
+const zona = document.getElementById("zonaJuego");
+const puntosTexto = document.getElementById("puntos");
+const tiempoTexto = document.getElementById("tiempo");
+const recordTexto = document.getElementById("record");
+const mensaje = document.getElementById("mensaje");
+
+let puntos = 0;
+let tiempo = 30;
+let jugando = false;
+let reloj;
+let generador;
+let record = 0;
+
+try {
+    record = Number(localStorage.getItem("recordCosmico")) || 0;
+} catch (error) {
+    record = 0;
+}
+
+recordTexto.textContent = record;
+
+const objetos = [
+    { emoji: "⭐", valor: 1 },
+    { emoji: "💎", valor: 5 },
+    { emoji: "🌟", valor: 2 },
+    { emoji: "☄️", valor: -2 },
+    { emoji: "🪐", valor: 3 },
+    { emoji: "👾", valor: -1 }
+];
+
+function crearObjeto() {
+    if (!jugando) return;
+
+    const objeto = objetos[
+        Math.floor(Math.random() * objetos.length)
+    ];
+
+    const boton = document.createElement("button");
+    boton.className = "objeto";
+    boton.textContent = objeto.emoji;
+    boton.setAttribute("aria-label", "Atrapar " + objeto.emoji);
+
+    const maxX = Math.max(0, zona.clientWidth - 55);
+    const maxY = Math.max(0, zona.clientHeight - 55);
+
+    boton.style.left = Math.random() * maxX + "px";
+    boton.style.top = Math.random() * maxY + "px";
+
+    boton.onclick = function() {
+        if (!jugando) return;
+
+        puntos = Math.max(0, puntos + objeto.valor);
+        puntosTexto.textContent = puntos;
+
+        if (objeto.valor > 0) {
+            mensaje.textContent = "+" + objeto.valor + " puntos ✨";
+        } else {
+            mensaje.textContent = objeto.valor + " puntos 😵";
+        }
+
+        if (puntos > record) {
+            record = puntos;
+            recordTexto.textContent = record;
+
+            try {
+                localStorage.setItem("recordCosmico", record);
+            } catch (error) {
+                // El juego sigue funcionando aunque no se pueda guardar.
+            }
+        }
+
+        boton.remove();
+    };
+
+    zona.appendChild(boton);
+
+    setTimeout(() => {
+        boton.remove();
+    }, 1400);
+}
+
+function comenzarJuego() {
+    clearInterval(reloj);
+    clearInterval(generador);
+
+    puntos = 0;
+    tiempo = 30;
+    jugando = true;
+
+    puntosTexto.textContent = puntos;
+    tiempoTexto.textContent = tiempo;
+    mensaje.textContent = "¡Atrapa todos los objetos!";
+
+    zona.innerHTML = "";
+
+    crearObjeto();
+
+    generador = setInterval(crearObjeto, 650);
+
+    reloj = setInterval(function() {
+        tiempo--;
+        tiempoTexto.textContent = tiempo;
+
+        if (tiempo <= 0) {
+            terminarJuego();
+        }
+    }, 1000);
+}
+
+function terminarJuego() {
+    jugando = false;
+
+    clearInterval(reloj);
+    clearInterval(generador);
+
+    zona.innerHTML = "<p style='font-size:25px;padding-top:90px'>🏁 ¡Fin del juego!</p>";
+
+    mensaje.textContent =
+        "Conseguiste " + puntos + " puntos. " +
+        (puntos >= 30 ? "¡Increíble! 🏆" : "¡Inténtalo otra vez! 🚀");
+}
+
+document.getElementById("iniciar").onclick = function() {
+    if (!jugando) comenzarJuego();
+};
+
+document.getElementById("reiniciar").onclick = comenzarJuego;
+</script>
+
 </body>
 </html>
