@@ -4,300 +4,1026 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caos Cósmico 🎮</title>
+<title>Caos Cósmico - Arcade espacial</title>
     <link rel="manifest" href="manifest.json">
 
 <style>
-* {
-    box-sizing: border-box;
+:root {
+  --bg: #07091c;
+  --cyan: #70f7ff;
+  --pink: #ff70d4;
+  --gold: #ffe58b;
+  --text: #f4f6ff;
+  --muted: #aab4df;
 }
+
+* { box-sizing: border-box; }
 
 body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    color: white;
-    text-align: center;
-    background: linear-gradient(135deg, #090923, #32145c, #071d3e);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  background:
+    radial-gradient(ellipse at 15% 5%, #25275d, transparent 35%),
+    radial-gradient(ellipse at 90% 80%, #42184e, transparent 30%),
+    var(--bg);
+  padding: 18px;
 }
 
-.contenedor {
-    width: 100%;
-    max-width: 750px;
-    background: #11142bea;
-    padding: 25px;
-    border: 2px solid #754cff;
-    border-radius: 22px;
-    box-shadow: 0 0 35px #754cff55;
-}
-
-h1 {
-    color: #72faff;
-    text-shadow: 0 0 15px #00eaff;
-    font-size: clamp(25px, 5vw, 40px);
-}
-
-p {
-    color: #d5d8ff;
-}
-
-.estadisticas {
-    display: flex;
-    justify-content: space-around;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-.estadisticas div {
-    background: #252750;
-    padding: 12px;
-    border-radius: 12px;
-    flex: 1;
-}
-
-.numero {
-    display: block;
-    color: #72faff;
-    font-size: 25px;
-    font-weight: bold;
-    margin-top: 5px;
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+  background-image: radial-gradient(#fff 1px, transparent 1px);
+  background-size: 43px 43px;
 }
 
 button {
-    background: #72faff;
-    color: #10132d;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 5px;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+  border: 1px solid #ffffff20;
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #10152d;
+  background: linear-gradient(110deg, var(--cyan), #b8a2ff);
+  transition: transform .15s, filter .15s;
 }
 
 button:hover {
-    background: #ff73d2;
-    transform: scale(1.04);
+  transform: translateY(-2px);
+  filter: brightness(1.08);
 }
 
-#zonaJuego {
-    position: relative;
-    height: 350px;
-    overflow: hidden;
-    background: radial-gradient(circle, #24245c, #080b20);
-    border: 2px solid #484b91;
-    border-radius: 15px;
+.app {
+  position: relative;
+  max-width: 1050px;
+  margin: auto;
+  background: #0c1129ed;
+  border: 1px solid #6e7cff55;
+  border-radius: 24px;
+  padding: clamp(14px, 3vw, 28px);
+  box-shadow: 0 24px 90px #0008;
 }
 
-.objeto {
-    position: absolute;
-    border: none;
-    background: transparent;
-    font-size: 35px;
-    padding: 5px;
-    cursor: pointer;
-    animation: aparecer 0.2s ease-out;
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-@keyframes aparecer {
-    from {
-        transform: scale(0);
-    }
-    to {
-        transform: scale(1);
-    }
+.kicker {
+  color: var(--cyan);
+  letter-spacing: .2em;
+  font-size: .72rem;
+  font-weight: 850;
 }
 
-#mensaje {
-    min-height: 25px;
-    color: #ff73d2;
-    font-weight: bold;
+h1 {
+  font-size: clamp(1.7rem, 4vw, 2.7rem);
+  margin: 0;
+  font-weight: 950;
 }
 
-.instrucciones {
-    font-size: 14px;
-    line-height: 1.8;
+h1 span { color: var(--pink); }
+
+header p.sub, #gameDescription {
+  color: var(--muted);
 }
 
+.stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  min-width: 84px;
+  text-align: center;
+  padding: 10px;
+  background: #ffffff0a;
+  border: 1px solid #ffffff1a;
+  border-radius: 13px;
+}
+
+.stat small {
+  display: block;
+  color: var(--muted);
+  font-size: .67rem;
+}
+
+.stat strong {
+  font-size: 1.35rem;
+  color: var(--cyan);
+}
+
+.section-title {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 24px 0 10px;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.game-card {
+  background: linear-gradient(145deg, #1b2450, #121831);
+  color: var(--text);
+  border: 1px solid #7988ff44;
+  padding: 14px 10px;
+  text-align: left;
+  min-height: 115px;
+}
+
+.game-card .emoji {
+  font-size: 1.7rem;
+  display: block;
+}
+
+.game-card strong, .game-card small {
+  display: block;
+}
+
+.game-card small {
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.game-card.active {
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px #70f7ff22;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 12px;
+}
+
+#gameTitle {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+#gameDescription {
+  margin: 5px 0 0;
+  font-size: .9rem;
+}
+
+#status {
+  color: var(--gold);
+  font-weight: 750;
+  min-height: 25px;
+  margin: 8px 0;
+}
+
+#arena {
+  height: 370px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid #7785ff66;
+  background:
+    radial-gradient(ellipse at 50% 110%, #343a82, transparent 55%),
+    linear-gradient(#090e29, #101337);
+  isolation: isolate;
+}
+
+#arena .welcome {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+}
+
+#arena .welcome .big { font-size: 4rem; }
+
+.target {
+  position: absolute;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  background: #ffffff13;
+  border: 1px solid #ffffff35;
+  animation: pop .15s ease-out;
+}
+
+.target.bad { box-shadow: 0 0 18px #ff587d88; }
+
+.hud-note {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  color: #c7d2ff;
+  font-size: .8rem;
+  z-index: 3;
+}
+
+.ship {
+  position: absolute;
+  bottom: 16px;
+  left: calc(50% - 24px);
+  font-size: 2.7rem;
+  z-index: 3;
+  filter: drop-shadow(0 0 10px var(--cyan));
+}
+
+.rock {
+  position: absolute;
+  font-size: 2rem;
+  z-index: 2;
+}
+
+.lane {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  max-width: 470px;
+  margin: 60px auto 0;
+}
+
+.lane button {
+  font-size: 1.7rem;
+  min-height: 75px;
+  background: #202956;
+  color: white;
+}
+
+.lane button.flash {
+  background: var(--cyan);
+  color: #11152d;
+  box-shadow: 0 0 25px var(--cyan);
+}
+
+.lane button:disabled { opacity: 1; }
+
+.memory-info {
+  text-align: center;
+  color: var(--muted);
+  margin-top: 15px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 13px;
+}
+
+.secondary {
+  background: #ffffff0c;
+  color: var(--text);
+  border: 1px solid #ffffff25;
+}
+
+.bottom {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.info-card {
+  border: 1px solid #ffffff19;
+  border-radius: 15px;
+  padding: 14px;
+  background: #ffffff06;
+}
+
+.info-card h3 { margin: 0 0 8px; }
+
+.info-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .87rem;
+  line-height: 1.6;
+}
+
+@keyframes pop {
+  from { transform: scale(.25); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media(max-width: 720px) {
+  .games { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bottom { grid-template-columns: 1fr; }
+  #arena { height: 350px; }
+  .stat { min-width: 70px; flex: 1; }
+}
+
+@media(max-width: 420px) {
+  body { padding: 7px; }
+  .app { padding: 12px; }
+  .stats { width: 100%; }
+  .lane { gap: 6px; }
+  .lane button { min-height: 62px; }
+}
 </style>
 </head>
 
 <body>
+<main class="app">
 
-<div class="contenedor">
+<header>
+  <div>
+    <p class="kicker">ARCADE INTERGALÁCTICO</p>
+    <h1>CAOS <span>CÓSMICO</span> 🚀</h1>
+    <p class="sub">Cuatro desafíos. Una galaxia.</p>
+  </div>
 
-    <h1>🚀 CAOS CÓSMICO</h1>
-
-    <p>¡Atrapa los objetos espaciales y consigue puntos!</p>
-
-    <div class="estadisticas">
-        <div>
-            PUNTOS
-            <span class="numero" id="puntos">0</span>
-        </div>
-
-        <div>
-            TIEMPO
-            <span class="numero" id="tiempo">30</span>
-        </div>
-
-        <div>
-            RÉCORD
-            <span class="numero" id="record">0</span>
-        </div>
+  <div class="stats">
+    <div class="stat">
+      <small>PUNTOS</small>
+      <strong id="score">0</strong>
     </div>
-
-    <button id="iniciar">▶ Comenzar</button>
-    <button id="reiniciar">↻ Reiniciar</button>
-
-    <p id="mensaje">Presiona Comenzar para jugar.</p>
-
-    <div id="zonaJuego">
-        <p>🌌 ¡Prepárate para la aventura!</p>
+    <div class="stat">
+      <small>MONEDAS</small>
+      <strong id="coins">0</strong>
     </div>
-
-    <div class="instrucciones">
-        ⭐ Estrella: +1 punto<br>
-        💎 Cristal: +5 puntos<br>
-        ☄️ Cometa: −2 puntos<br>
-        ¡Tienes 30 segundos!
+    <div class="stat">
+      <small>RÉCORD</small>
+      <strong id="record">0</strong>
     </div>
+  </div>
+</header>
 
+<h2 class="section-title">ELIGE TU MISIÓN</h2>
+
+<nav class="games">
+  <button class="game-card active" data-game="stars">
+    <span class="emoji">⭐</span>
+    <strong>Cazador estelar</strong>
+    <small>Atrapa objetos espaciales.</small>
+  </button>
+
+  <button class="game-card" data-game="meteor">
+    <span class="emoji">🚀</span>
+    <strong>Lluvia de meteoritos</strong>
+    <small>Esquiva obstáculos.</small>
+  </button>
+
+  <button class="game-card" data-game="aliens">
+    <span class="emoji">👾</span>
+    <strong>Invasión alienígena</strong>
+    <small>Derrota a los enemigos.</small>
+  </button>
+
+  <button class="game-card" data-game="memory">
+    <span class="emoji">🧠</span>
+    <strong>Memoria galáctica</strong>
+    <small>Repite la secuencia.</small>
+  </button>
+</nav>
+
+<section class="toolbar">
+  <div>
+    <h2 id="gameTitle">⭐ Cazador estelar</h2>
+    <p id="gameDescription">Atrapa estrellas y cristales.</p>
+  </div>
+  <button id="startBtn">▶ Comenzar misión</button>
+</section>
+
+<div id="status" aria-live="polite">
+  Elige una misión y presiona Comenzar.
 </div>
 
+<section id="arena" aria-label="Zona de juego">
+  <div class="welcome">
+    <div class="big">🌌</div>
+    <strong>La galaxia te espera</strong>
+    <span>Comienza una misión para jugar.</span>
+  </div>
+</section>
+
+<div class="controls">
+  <button class="secondary" id="leftBtn" hidden>⬅ Izquierda</button>
+  <button class="secondary" id="rightBtn" hidden>Derecha ➡</button>
+  <button class="secondary" id="restartBtn">↻ Reiniciar misión</button>
+</div>
+
+<section class="bottom">
+  <div class="info-card">
+    <h3>🪙 Tu progreso</h3>
+    <p>Consigue puntos y monedas. Tu récord se guarda en este navegador.</p>
+  </div>
+  <div class="info-card">
+    <h3>🎮 Controles</h3>
+    <p id="controlsText">
+      Haz clic en los objetos. En el modo meteoritos usa las flechas.
+    </p>
+  </div>
+</section>
+
+</main>
+
 <script>
-const zona = document.getElementById("zonaJuego");
-const puntosTexto = document.getElementById("puntos");
-const tiempoTexto = document.getElementById("tiempo");
-const recordTexto = document.getElementById("record");
-const mensaje = document.getElementById("mensaje");
+(() => {
+  const $ = id => document.getElementById(id);
 
-let puntos = 0;
-let tiempo = 30;
-let jugando = false;
-let reloj;
-let generador;
-let record = 0;
+  const arena = $('arena');
+  const scoreEl = $('score');
+  const coinsEl = $('coins');
+  const recordEl = $('record');
+  const statusEl = $('status');
+  const titleEl = $('gameTitle');
+  const descEl = $('gameDescription');
+  const startBtn = $('startBtn');
+  const leftBtn = $('leftBtn');
+  const rightBtn = $('rightBtn');
 
-try {
-    record = Number(localStorage.getItem("recordCosmico")) || 0;
-} catch (error) {
-    record = 0;
-}
+  const gameInfo = {
+    stars: {
+      title: '⭐ Cazador estelar',
+      description: 'Atrapa estrellas y cristales. ¡Evita los cometas!',
+      controls: '⭐ +1 · 🌟 +2 · 💎 +5 · ☄️ −2. Haz clic en los objetos.'
+    },
+    meteor: {
+      title: '🚀 Lluvia de meteoritos',
+      description: 'Esquiva las rocas espaciales y sobrevive.',
+      controls: 'Usa las flechas izquierda y derecha o los botones para mover la nave.'
+    },
+    aliens: {
+      title: '👾 Invasión alienígena',
+      description: 'Haz clic en los alienígenas antes de que escapen.',
+      controls: 'Cada alienígena vale 2 puntos. Algunos dan monedas.'
+    },
+    memory: {
+      title: '🧠 Memoria galáctica',
+      description: 'Observa la secuencia y repítela.',
+      controls: 'Memoriza los planetas iluminados y repite el orden correcto.'
+    }
+  };
 
-recordTexto.textContent = record;
+  const state = {
+    game: 'stars',
+    running: false,
+    score: 0,
+    coins: 0,
+    record: 0,
+    timer: null,
+    spawn: null,
+    raf: null,
+    lastFrame: 0,
+    elapsed: 0,
+    shipX: 50,
+    rocks: [],
+    sequence: [],
+    inputIndex: 0,
+    memoryBusy: false,
+    round: 0
+  };
 
-const objetos = [
-    { emoji: "⭐", valor: 1 },
-    { emoji: "💎", valor: 5 },
-    { emoji: "🌟", valor: 2 },
-    { emoji: "☄️", valor: -2 },
-    { emoji: "🪐", valor: 3 },
-    { emoji: "👾", valor: -1 }
-];
+  try {
+    state.record = Number(
+      localStorage.getItem('caosCosmicoRecord')
+    ) || 0;
+  } catch (e) {}
 
-function crearObjeto() {
-    if (!jugando) return;
+  recordEl.textContent = state.record;
 
-    const objeto = objetos[
-        Math.floor(Math.random() * objetos.length)
-    ];
+  function say(text) {
+    statusEl.textContent = text;
+  }
 
-    const boton = document.createElement("button");
-    boton.className = "objeto";
-    boton.textContent = objeto.emoji;
-    boton.setAttribute("aria-label", "Atrapar " + objeto.emoji);
+  function clearTimers() {
+    clearInterval(state.timer);
+    clearInterval(state.spawn);
 
-    const maxX = Math.max(0, zona.clientWidth - 55);
-    const maxY = Math.max(0, zona.clientHeight - 55);
+    if (state.raf) {
+      cancelAnimationFrame(state.raf);
+    }
 
-    boton.style.left = Math.random() * maxX + "px";
-    boton.style.top = Math.random() * maxY + "px";
+    state.timer = null;
+    state.spawn = null;
+    state.raf = null;
+  }
 
-    boton.onclick = function() {
-        if (!jugando) return;
+  function updateScore() {
+    scoreEl.textContent = state.score;
+    coinsEl.textContent = state.coins;
+  }
 
-        puntos = Math.max(0, puntos + objeto.valor);
-        puntosTexto.textContent = puntos;
+  function award(points, coin = 0) {
+    state.score = Math.max(0, state.score + points);
+    state.coins += coin;
+    updateScore();
 
-        if (objeto.valor > 0) {
-            mensaje.textContent = "+" + objeto.valor + " puntos ✨";
-        } else {
-            mensaje.textContent = objeto.valor + " puntos 😵";
-        }
+    if (state.score > state.record) {
+      state.record = state.score;
+      recordEl.textContent = state.record;
 
-        if (puntos > record) {
-            record = puntos;
-            recordTexto.textContent = record;
+      try {
+        localStorage.setItem(
+          'caosCosmicoRecord',
+          String(state.record)
+        );
+      } catch (e) {}
+    }
+  }
 
-            try {
-                localStorage.setItem("recordCosmico", record);
-            } catch (error) {
-                // El juego sigue funcionando aunque no se pueda guardar.
-            }
-        }
+  function stopGame(message) {
+    state.running = false;
+    clearTimers();
 
-        boton.remove();
+    startBtn.textContent = '▶ Jugar otra vez';
+    leftBtn.hidden = true;
+    rightBtn.hidden = true;
+
+    say(message);
+  }
+
+  function chooseGame(game) {
+    stopGame('Misión seleccionada. Presiona Comenzar.');
+
+    state.game = game;
+
+    document.querySelectorAll('.game-card').forEach(button => {
+      button.classList.toggle(
+        'active',
+        button.dataset.game === game
+      );
+    });
+
+    titleEl.textContent = gameInfo[game].title;
+    descEl.textContent = gameInfo[game].description;
+    $('controlsText').textContent = gameInfo[game].controls;
+
+    arena.innerHTML = '';
+
+    const emojis = {
+      stars: '🌠',
+      meteor: '🚀',
+      aliens: '👾',
+      memory: '🧠'
     };
 
-    zona.appendChild(boton);
+    arena.innerHTML = `
+      <div class="welcome">
+        <div class="big">${emojis[game]}</div>
+        <strong>${gameInfo[game].title}</strong>
+        <span>Presiona Comenzar misión.</span>
+      </div>
+    `;
+
+    leftBtn.hidden = game !== 'meteor';
+    rightBtn.hidden = game !== 'meteor';
+
+    startBtn.textContent = '▶ Comenzar misión';
+  }
+
+  function begin() {
+    clearTimers();
+
+    state.running = true;
+    state.score = 0;
+    state.coins = 0;
+    state.elapsed = 0;
+    state.rocks = [];
+    state.sequence = [];
+    state.inputIndex = 0;
+    state.round = 0;
+
+    updateScore();
+    arena.innerHTML = '';
+
+    startBtn.textContent = '▶ Reiniciar partida';
+
+    leftBtn.hidden = state.game !== 'meteor';
+    rightBtn.hidden = state.game !== 'meteor';
+
+    if (state.game === 'stars') startStars();
+    if (state.game === 'meteor') startMeteor();
+    if (state.game === 'aliens') startAliens();
+    if (state.game === 'memory') startMemory();
+  }
+
+  // MINIJUEGO 1: CAZADOR ESTELAR
+  function startStars() {
+    let remaining = 30;
+
+    say('¡Atrapa objetos! Tiempo: 30 segundos.');
+
+    const items = [
+      ['⭐', 1, 0],
+      ['🌟', 2, 0],
+      ['💎', 5, 1],
+      ['☄️', -2, 0],
+      ['🪙', 1, 1]
+    ];
+
+    function spawn() {
+      if (!state.running || state.game !== 'stars') return;
+
+      const item = items[
+        Math.floor(Math.random() * items.length)
+      ];
+
+      const [emoji, value, coin] = item;
+      const button = document.createElement('button');
+
+      button.className = 'target' + (value < 0 ? ' bad' : '');
+      button.textContent = emoji;
+
+      button.style.left =
+        Math.random() * Math.max(0, arena.clientWidth - 55) + 'px';
+
+      button.style.top =
+        Math.random() * Math.max(0, arena.clientHeight - 60) + 'px';
+
+      button.onclick = () => {
+        if (!state.running) return;
+
+        award(value, coin);
+
+        say(
+          (value > 0 ? '+' : '') + value +
+          ' puntos' + (coin ? ' y una moneda' : '') + ' ✨'
+        );
+
+        button.remove();
+      };
+
+      arena.appendChild(button);
+
+      setTimeout(() => button.remove(), 1350);
+    }
+
+    spawn();
+    state.spawn = setInterval(spawn, 570);
+
+    state.timer = setInterval(() => {
+      remaining--;
+
+      if (remaining <= 0) {
+        stopGame(
+          '⏱️ ¡Tiempo! Conseguistes ' +
+          state.score + ' puntos y ' +
+          state.coins + ' monedas.'
+        );
+      } else {
+        say('¡Atrapa objetos! Tiempo: ' + remaining + ' segundos.');
+      }
+    }, 1000);
+  }
+
+  // MINIJUEGO 2: LLUVIA DE METEORITOS
+  function startMeteor() {
+    state.shipX = 50;
+    state.rocks = [];
+    state.lastFrame = 0;
+
+    const ship = document.createElement('div');
+    ship.className = 'ship';
+    ship.id = 'ship';
+    ship.textContent = '🚀';
+    arena.appendChild(ship);
+
+    const note = document.createElement('div');
+    note.className = 'hud-note';
+    note.id = 'surviveNote';
+    note.textContent = '¡Evita los meteoritos!';
+    arena.appendChild(note);
+
+    say('¡Sobrevive! Usa las flechas ← →.');
+
+    function spawnRock() {
+      if (!state.running || state.game !== 'meteor') return;
+
+      const rock = document.createElement('div');
+      rock.className = 'rock';
+      rock.textContent = Math.random() < 0.18 ? '🪨' : '☄️';
+
+      const x = Math.random() * Math.max(10, arena.clientWidth - 40);
+
+      rock.style.left = x + 'px';
+      rock.style.top = '-38px';
+
+      arena.appendChild(rock);
+
+      state.rocks.push({
+        el: rock,
+        x: x,
+        y: -38,
+        speed: 125 + Math.random() * 100
+      });
+    }
+
+    function frame(now) {
+      if (!state.running || state.game !== 'meteor') return;
+
+      const dt = Math.min(
+        (now - (state.lastFrame || now)) / 1000,
+        0.04
+      );
+
+      state.lastFrame = now;
+      state.elapsed += dt;
+
+      const note = $('surviveNote');
+
+      if (note) {
+        note.textContent =
+          'Tiempo: ' + Math.floor(state.elapsed) +
+          ' s · Evita los meteoritos';
+      }
+
+      const shipX = state.shipX / 100 * arena.clientWidth;
+
+      for (let i = state.rocks.length - 1; i >= 0; i--) {
+        const rock = state.rocks[i];
+
+        rock.y += rock.speed * dt;
+        rock.el.style.top = rock.y + 'px';
+
+        const shipY = arena.clientHeight - 35;
+
+        if (
+          rock.y > shipY - 30 &&
+          rock.y < shipY + 15 &&
+          Math.abs((rock.x + 12) - shipX) < 38
+        ) {
+          stopGame(
+            '💥 ¡Choque! Sobreviviste ' +
+            Math.floor(state.elapsed) +
+            ' segundos y ganaste ' + state.score + ' puntos.'
+          );
+          return;
+        }
+
+        if (rock.y > arena.clientHeight + 40) {
+          rock.el.remove();
+          state.rocks.splice(i, 1);
+        }
+      }
+
+      state.raf = requestAnimationFrame(frame);
+    }
+
+    state.spawn = setInterval(spawnRock, 680);
+    spawnRock();
+
+    state.raf = requestAnimationFrame(frame);
+
+    state.timer = setInterval(() => {
+      if (!state.running) return;
+
+      award(
+        1,
+        Math.floor(state.elapsed) % 5 === 0 ? 1 : 0
+      );
+    }, 1000);
+  }
+
+  function moveShipBy(delta) {
+    if (!state.running || state.game !== 'meteor') return;
+
+    state.shipX = Math.max(
+      5,
+      Math.min(95, state.shipX + delta)
+    );
+
+    const ship = $('ship');
+
+    if (ship) {
+      ship.style.left = `calc(${state.shipX}% - 22px)`;
+    }
+  }
+
+  document.addEventListener('keydown', event => {
+    if (
+      state.game === 'meteor' &&
+      state.running &&
+      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+    ) {
+      event.preventDefault();
+
+      moveShipBy(
+        event.key === 'ArrowLeft' ? -5 : 5
+      );
+    }
+  });
+
+  leftBtn.onclick = () => moveShipBy(-7);
+  rightBtn.onclick = () => moveShipBy(7);
+
+  // MINIJUEGO 3: INVASIÓN ALIENÍGENA
+  function startAliens() {
+    let remaining = 25;
+
+    say('¡Caza alienígenas! Tiempo: 25 segundos.');
+
+    function spawn() {
+      if (!state.running || state.game !== 'aliens') return;
+
+      const button = document.createElement('button');
+
+      button.className = 'target';
+
+      button.textContent = ['👾', '👽', '🤖'][
+        Math.floor(Math.random() * 3)
+      ];
+
+      button.style.left =
+        Math.random() * Math.max(0, arena.clientWidth - 55) + 'px';
+
+      button.style.top =
+        Math.random() * Math.max(0, arena.clientHeight - 60) + 'px';
+
+      button.onclick = () => {
+        if (!state.running) return;
+
+        award(2, Math.random() < 0.25 ? 1 : 0);
+
+        say('¡Alienígena derrotado! +2 puntos');
+
+        button.remove();
+      };
+
+      arena.appendChild(button);
+
+      setTimeout(() => button.remove(), 1050);
+    }
+
+    spawn();
+    state.spawn = setInterval(spawn, 480);
+
+    state.timer = setInterval(() => {
+      remaining--;
+
+      if (remaining <= 0) {
+        stopGame(
+          '🛸 ¡Misión completada! Puntuación: ' +
+          state.score + ' puntos.'
+        );
+      } else {
+        say('¡Caza alienígenas! Tiempo: ' + remaining + ' segundos.');
+      }
+    }, 1000);
+  }
+
+  // MINIJUEGO 4: MEMORIA GALÁCTICA
+  const memoryEmojis = ['🪐', '🌍', '🌙', '☀️'];
+
+  function startMemory() {
+    state.memoryBusy = true;
+    state.round = 0;
+
+    arena.innerHTML = `
+      <div class="memory-info" id="memoryInfo">
+        Mira la secuencia...
+      </div>
+      <div class="lane" id="memoryLane"></div>
+    `;
+
+    const lane = $('memoryLane');
+
+    memoryEmojis.forEach((emoji, index) => {
+      const button = document.createElement('button');
+
+      button.textContent = emoji;
+      button.disabled = true;
+      button.dataset.index = index;
+      button.onclick = () => memoryPick(index);
+
+      lane.appendChild(button);
+    });
+
+    say('¡Observa y repite la secuencia!');
+
+    nextRound();
+  }
+
+  function flashButton(index) {
+    const button = $('memoryLane')?.querySelector(
+      `[data-index="${index}"]`
+    );
+
+    if (!button) return;
+
+    button.classList.add('flash');
 
     setTimeout(() => {
-        boton.remove();
-    }, 1400);
-}
+      button.classList.remove('flash');
+    }, 420);
+  }
 
-function comenzarJuego() {
-    clearInterval(reloj);
-    clearInterval(generador);
+  function nextRound() {
+    if (!state.running || state.game !== 'memory') return;
 
-    puntos = 0;
-    tiempo = 30;
-    jugando = true;
+    state.round++;
+    state.inputIndex = 0;
 
-    puntosTexto.textContent = puntos;
-    tiempoTexto.textContent = tiempo;
-    mensaje.textContent = "¡Atrapa todos los objetos!";
+    state.sequence.push(
+      Math.floor(Math.random() * 4)
+    );
 
-    zona.innerHTML = "";
+    state.memoryBusy = true;
 
-    crearObjeto();
+    $('memoryInfo').textContent =
+      'Nivel ' + state.round + ' · Observa la secuencia';
 
-    generador = setInterval(crearObjeto, 650);
+    const buttons = [
+      ...$('memoryLane').querySelectorAll('button')
+    ];
 
-    reloj = setInterval(function() {
-        tiempo--;
-        tiempoTexto.textContent = tiempo;
+    buttons.forEach(button => button.disabled = true);
 
-        if (tiempo <= 0) {
-            terminarJuego();
-        }
-    }, 1000);
-}
+    let index = 0;
 
-function terminarJuego() {
-    jugando = false;
+    function playSequence() {
+      if (!state.running || state.game !== 'memory') return;
 
-    clearInterval(reloj);
-    clearInterval(generador);
+      if (index >= state.sequence.length) {
+        state.memoryBusy = false;
 
-    zona.innerHTML = "<p style='font-size:25px;padding-top:90px'>🏁 ¡Fin del juego!</p>";
+        buttons.forEach(button => button.disabled = false);
 
-    mensaje.textContent =
-        "Conseguiste " + puntos + " puntos. " +
-        (puntos >= 30 ? "¡Increíble! 🏆" : "¡Inténtalo otra vez! 🚀");
-}
+        $('memoryInfo').textContent =
+          'Tu turno: repite ' + state.sequence.length + ' pasos';
 
-document.getElementById("iniciar").onclick = function() {
-    if (!jugando) comenzarJuego();
-};
+        return;
+      }
 
-document.getElementById("reiniciar").onclick = comenzarJuego;
+      flashButton(state.sequence[index]);
+
+      index++;
+
+      setTimeout(playSequence, 650);
+    }
+
+    setTimeout(playSequence, 400);
+  }
+
+  function memoryPick(index) {
+    if (
+      !state.running ||
+      state.game !== 'memory' ||
+      state.memoryBusy
+    ) return;
+
+    flashButton(index);
+
+    if (index !== state.sequence[state.inputIndex]) {
+      stopGame(
+        '🧠 Fin de la secuencia. Llegaste al nivel ' +
+        state.round + '.'
+      );
+
+      return;
+    }
+
+    state.inputIndex++;
+
+    if (state.inputIndex === state.sequence.length) {
+      award(state.round * 5, 1);
+
+      say(
+        '¡Correcto! +' + state.round * 5 +
+        ' puntos y una moneda.'
+      );
+
+      state.memoryBusy = true;
+
+      setTimeout(nextRound, 850);
+    }
+  }
+
+  // BOTONES DEL MENÚ
+  document.querySelectorAll('.game-card').forEach(button => {
+    button.addEventListener('click', () => {
+      chooseGame(button.dataset.game);
+    });
+  });
+
+  startBtn.addEventListener('click', begin);
+
+  $('restartBtn').addEventListener('click', begin);
+
+  // PANTALLA INICIAL
+  chooseGame('stars');
+
+})();
 </script>
-
 </body>
 </html>
